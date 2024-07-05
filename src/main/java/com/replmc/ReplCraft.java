@@ -2,7 +2,9 @@ package com.replmc;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -42,16 +44,22 @@ public class ReplCraft implements ModInitializer {
 
         websocketServer = new WebsocketServer();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            LOGGER.info("Cleanup");
+        // Gracefully shutdown WebsocketServer on server /stop
+        ServerLifecycleEvents.SERVER_STOPPING.register((minecraftServer) -> {
+            LOGGER.info("Server stopping event");
 
             websocketServer.shutdown();
-        }));
+        });
 
+        // test
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            LOGGER.info("Block interacted by" + player.getName());
+            BlockState block = world.getBlockState(hitResult.getBlockPos());
+
+            LOGGER.info("Block " + block + " interacted by " + player.getName());
+
 
             return ActionResult.PASS;
+
         });
     }
 
