@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SignBlock;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -53,14 +54,28 @@ public class ReplCraft implements ModInitializer {
 
         // test
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            BlockState block = world.getBlockState(hitResult.getBlockPos());
+            BlockState blockState = world.getBlockState(hitResult.getBlockPos());
 
-            LOGGER.info("Block " + block + " interacted by " + player.getName());
+            // ignore non-sign blocks
+            if (!((blockState.getBlock()) instanceof SignBlock)) {
+                return ActionResult.PASS;
+            }
 
+            // ignore if player is not sneaking
+            if (!player.isSneaking()) {
+                return ActionResult.PASS;
+            }
+
+            // todo: check for valid structure
+
+            String token = "eyJ.dummyToken";
+            player.sendMessage(Text.literal("Here's your token!\n" + token));
 
             return ActionResult.PASS;
 
         });
+
+
     }
 
 
