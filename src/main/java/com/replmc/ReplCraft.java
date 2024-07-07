@@ -4,14 +4,16 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SignBlock;
+import net.minecraft.block.WallSignBlock;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +57,10 @@ public class ReplCraft implements ModInitializer {
         // test
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             BlockState blockState = world.getBlockState(hitResult.getBlockPos());
+            Block block = blockState.getBlock();
 
-            // ignore non-sign blocks
-            if (!((blockState.getBlock()) instanceof SignBlock)) {
+            // ignore if block isn't a wall sign
+            if (!(block instanceof WallSignBlock)) {
                 return ActionResult.PASS;
             }
 
@@ -66,12 +69,16 @@ public class ReplCraft implements ModInitializer {
                 return ActionResult.PASS;
             }
 
+            Direction signDirection = blockState.get(WallSignBlock.FACING);
+
+
             // todo: check for valid structure
 
             String token = "eyJ.dummyToken";
             player.sendMessage(Text.literal("Here's your token!\n" + token));
 
-            return ActionResult.PASS;
+            // don't show the sign edit UI
+            return ActionResult.FAIL;
 
         });
 
