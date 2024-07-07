@@ -8,12 +8,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.WallSignBlock;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.block.entity.SignText;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,22 +58,38 @@ public class ReplCraft implements ModInitializer {
         });
 
         // test
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            BlockState blockState = world.getBlockState(hitResult.getBlockPos());
-            Block block = blockState.getBlock();
-
-            // ignore if block isn't a wall sign
-            if (!(block instanceof WallSignBlock)) {
-                return ActionResult.PASS;
-            }
-
-            // ignore if player is not sneaking
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {// ignore if player is not sneaking
             if (!player.isSneaking()) {
                 return ActionResult.PASS;
             }
 
-            Direction signDirection = blockState.get(WallSignBlock.FACING);
 
+            BlockState signBlockState = world.getBlockState(hitResult.getBlockPos());
+            Block sign = signBlockState.getBlock();
+            BlockEntity signBlockEntity = world.getBlockEntity(hitResult.getBlockPos());
+
+            // ignore if sign isn't a wall sign
+            if (!(sign instanceof WallSignBlock) || !(signBlockEntity instanceof SignBlockEntity)) {
+                return ActionResult.PASS;
+            }
+
+            // ensure sign first line is "REPL"
+            SignText signText = ((SignBlockEntity) signBlockEntity).getFrontText();
+            if (!signText.getMessage(0, false).equals(Text.literal("REPL"))) {
+                return ActionResult.PASS;
+            }
+
+
+            BlockPos signPlacedBlockPos = hitResult.getBlockPos().add(signBlockState.get(WallSignBlock.FACING).getOpposite().getVector());
+
+            // nice! we've found the sign that the sign is placed on.
+            // Now, continue downwards to the bottom of the structure
+//            BlockPos signPlacedBottomBlockPos = signPlacedBlockPos;
+//            while (true) {
+//                BlockState blockState = world.getBlockState(signPlacedBottomBlockPos);
+//
+////                if (blockState.get)
+//            }
 
             // todo: check for valid structure
 
