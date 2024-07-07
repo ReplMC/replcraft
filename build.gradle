@@ -25,7 +25,6 @@ loom {
     mods {
         "replcraft" {
             sourceSet sourceSets.main
-            sourceSet sourceSets.client
         }
     }
 

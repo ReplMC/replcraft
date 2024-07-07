@@ -1,41 +1,35 @@
 {
-	"schemaVersion": 1,
-	"id": "replcraft",
-	"version": "${version}",
-	"name": "ReplCraft",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/replcraft/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.replmc.ReplCraft"
-		],
-		"client": [
-			"com.replmc.ReplCraftClient"
-		]
-	},
-	"mixins": [
-		"replcraft.mixins.json",
-		{
-			"config": "replcraft.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
-		"java": ">=21",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "replcraft",
+  "version": "${version}",
+  "name": "ReplCraft",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/replcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.replmc.ReplCraft"
+    ],
+    "client": [
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }
