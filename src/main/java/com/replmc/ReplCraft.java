@@ -11,11 +11,13 @@ import net.minecraft.block.WallSignBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SignText;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,17 +83,52 @@ public class ReplCraft implements ModInitializer {
 
 
             BlockPos signPlacedBlockPos = hitResult.getBlockPos().add(signBlockState.get(WallSignBlock.FACING).getOpposite().getVector());
+            Identifier structureMaterial = Registries.BLOCK.getId(world.getBlockState(signPlacedBlockPos).getBlock());
 
-            // nice! we've found the sign that the sign is placed on.
-            // Now, continue downwards to the bottom of the structure
-//            BlockPos signPlacedBottomBlockPos = signPlacedBlockPos;
-//            while (true) {
-//                BlockState blockState = world.getBlockState(signPlacedBottomBlockPos);
-//
-////                if (blockState.get)
-//            }
+            // find top north-east corner
+            BlockPos structureTopLeftNorthCorner = signPlacedBlockPos;
+            while (true) {
+                // look upwards
+                BlockPos nextPos = structureTopLeftNorthCorner.up();
+                Identifier blockType = Registries.BLOCK.getId(world.getBlockState(nextPos).getBlock());
+
+
+                if (blockType.equals(structureMaterial)) {
+                    structureTopLeftNorthCorner = nextPos;
+                } else {
+                    break;
+                }
+            }
+            while (true) {
+                // look north
+                BlockPos nextPos = structureTopLeftNorthCorner.north();
+                Identifier blockType = Registries.BLOCK.getId(world.getBlockState(nextPos).getBlock());
+
+
+                if (blockType.equals(structureMaterial)) {
+                    structureTopLeftNorthCorner = nextPos;
+                } else {
+                    break;
+                }
+            }
+            while (true) {
+                // look east
+                BlockPos nextPos = structureTopLeftNorthCorner.east();
+                Identifier blockType = Registries.BLOCK.getId(world.getBlockState(nextPos).getBlock());
+
+
+                if (blockType.equals(structureMaterial)) {
+                    structureTopLeftNorthCorner = nextPos;
+                } else {
+                    break;
+                }
+            }
+
+            // replace top north-east corner with diamond for debugging
+            world.setBlockState(structureTopLeftNorthCorner, Blocks.DIAMOND_BLOCK.getDefaultState());
 
             // todo: check for valid structure
+
 
             String token = "eyJ.dummyToken";
             player.sendMessage(Text.literal("Here's your token!\n" + token));
